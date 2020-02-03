@@ -1,25 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import UserList from './UserList'
 
 function App() {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    getUsers();
+  }, [users]);
+  function getUsersFromApi(){
+    return fetch("https://jsonplaceholder.typicode.com/users");
+  }
+  function getUsers(){
+    getUsersFromApi()
+    .then(res => res.json())
+    .then(
+      (result) => {
+        setUsers(result.map((user) =>
+          <li key={user.id}>
+            {user.name}
+          </li>
+        ));
+      },
+      (error) => {
+        console.log("Ocorreu um erro");
+      }
+    )
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserList users={users}></UserList>
+    
   );
 }
 
